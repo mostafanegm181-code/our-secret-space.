@@ -68,7 +68,6 @@
     <div class="container">
         <h2>مكاتنا السري والمتزامن 🚀</h2>
         
-        <!-- مكان الصورة (حط رابط صورتك هنا أو اسم ملف الصورة لو في نفس الفولدر) -->
         <div class="img-box">
             <img id="my-image" src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23" alt="صورة المكان">
         </div>
@@ -80,7 +79,6 @@
         <div id="status-text">متصل بالسيرفر وجاهز...</div>
     </div>
 
-    <!-- كود ربط فايربيز السحابي المدمج -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
@@ -100,19 +98,16 @@
 
         const statusRef = ref(db, 'actionStatus');
 
-        // دالة بتشتغل لما تضغط على الزرار وترسل السيرفر
         window.changeAction = function() {
             const randomMsg = "تم الضغط على الزرار بواسطة أحد الأجهزة الساعة " + new Date().toLocaleTimeString();
             set(statusRef, randomMsg);
         };
 
-        // استقبال التحديثات لحظياً على أي جهاز تاني فاتح الصفحة
         onValue(statusRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
                 document.getElementById('status-text').innerText = data;
-                // هنا ممكن تخليه يظهر إشعار صوتي أو يغير الشكل لحظياً
-                if(navigator.vibrate) navigator.vibrate(200); // اهتزاز بسيط للموبايل لو مدعوم
+                if(navigator.vibrate) navigator.vibrate(200);
             }
         });
     </script>
