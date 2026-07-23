@@ -3,381 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مكاننا السري 🌌💙</title>
-    
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
+    <title>مكاتنا السري - متزامن لحظياً</title>
     <style>
-        :root {
-            --card-bg: rgba(15, 23, 42, 0.85);
-            --text-color: #f8fafc;
-            --accent-color: #38bdf8;
-            --heart-color: #f43f5e;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: var(--text-color);
-            margin: 0;
+            font-family: 'Cairo', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #1f1c2c, #928dab);
+            color: #ffffff;
+            text-align: center;
             padding: 20px;
+            margin: 0;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            overflow-x: hidden;
-            background-color: #0f172a;
-            position: relative;
         }
-
-        /* خلفية الصور المتدرجة للـ 15 صورة */
-        .bg-slideshow {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            overflow: hidden;
-        }
-
-        .bg-slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            opacity: 0;
-            transition: opacity 2s ease-in-out;
-        }
-
-        .bg-slide.active {
-            opacity: 0.4;
-        }
-
-        /* قلوب متحركة */
-        .hearts-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .heart {
-            position: absolute;
-            color: rgba(244, 63, 94, 0.7);
-            font-size: 20px;
-            animation: flyUp 6s linear infinite;
-        }
-
-        @keyframes flyUp {
-            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
-            50% { opacity: 0.9; }
-            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
-        }
-
         .container {
-            position: relative;
-            z-index: 2;
-            width: 100%;
-            max-width: 750px;
-            background: var(--card-bg);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 28px;
-            padding: 25px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
-            box-sizing: border-box;
-        }
-
-        h1 {
-            text-align: center;
-            font-size: 26px;
-            margin-bottom: 5px;
-            color: #fff;
-        }
-
-        p.subtitle {
-            text-align: center;
-            color: #94a3b8;
-            font-size: 14px;
-            margin-bottom: 25px;
-        }
-
-        .split-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        @media (max-width: 600px) {
-            .split-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .side-box {
-            background: rgba(30, 41, 59, 0.75);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.6);
+            padding: 30px;
             border-radius: 20px;
-            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-width: 500px;
+            width: 100%;
         }
-
-        .side-title {
-            font-size: 16px;
-            color: var(--accent-color);
-            margin-bottom: 10px;
-            text-align: center;
-            font-weight: bold;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 5px;
+        h2 { margin-bottom: 20px; color: #ffeb3b; }
+        .img-box {
+            margin: 20px 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border: 3px solid #ffeb3b;
         }
-
-        .status-display {
-            font-size: 14px;
-            font-weight: bold;
-            color: #e2e8f0;
-            background: rgba(15, 23, 42, 0.6);
-            padding: 10px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 12px;
-            border: 1px dashed rgba(56, 189, 248, 0.3);
-            min-height: 20px;
+        img {
+            width: 100%;
+            height: auto;
+            display: block;
         }
-
-        .buttons-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 8px;
-            margin-bottom: 15px;
-            max-height: 220px;
-            overflow-y: auto;
-            padding-left: 2px;
-        }
-
         button {
-            background: rgba(56, 189, 248, 0.1);
-            color: #e2e8f0;
-            border: 1px solid rgba(56, 189, 248, 0.3);
-            padding: 8px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.3s ease;
-            font-family: inherit;
-        }
-
-        button:hover {
-            background: var(--accent-color);
-            color: #0f172a;
-        }
-
-        button.special {
-            background: rgba(244, 63, 94, 0.15);
-            border-color: rgba(244, 63, 94, 0.4);
-            color: #fda4af;
-        }
-
-        button.special:hover {
-            background: var(--heart-color);
+            background: #ff5722;
             color: white;
-        }
-
-        .note-input-box {
-            display: flex;
-            gap: 5px;
-            margin-top: 10px;
-        }
-
-        input[type="text"] {
-            flex: 1;
-            background: rgba(15, 23, 42, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 8px;
-            border-radius: 10px;
-            color: white;
-            font-family: inherit;
-            font-size: 12px;
-        }
-
-        input[type="text"]:focus {
-            outline: none;
-            border-color: var(--accent-color);
-        }
-
-        .update-btn {
-            background: var(--accent-color);
-            color: #0f172a;
-            font-weight: bold;
             border: none;
-            padding: 0 12px;
-            border-radius: 10px;
+            padding: 12px 25px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 30px;
             cursor: pointer;
-            font-size: 12px;
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(255, 87, 34, 0.4);
+            margin-top: 15px;
         }
-
-        .note-view {
-            background: rgba(15, 23, 42, 0.6);
-            border-radius: 10px;
-            padding: 10px;
-            font-size: 12px;
-            color: #cbd5e1;
-            margin-top: 10px;
-            text-align: center;
-            min-height: 25px;
+        button:hover {
+            background: #e64a19;
+            transform: scale(1.05);
         }
-
-        .footer {
-            text-align: center;
-            font-size: 12px;
-            color: #64748b;
-            margin-top: 20px;
+        #status-text {
+            margin-top: 15px;
+            font-size: 16px;
+            color: #00e676;
         }
     </style>
 </head>
 <body>
 
-    <!-- الـ 15 صورة في الخلفية -->
-    <div class="bg-slideshow" id="bgSlideshow">
-        <div class="bg-slide active" style="background-image: url('photo1.jpg');"></div>
-        <div class="bg-slide" style="background-image: url('photo2.jpg');"></div>
-        <div class="bg-slide" style="background-image: url('photo3.jpg');"></div>
-        <div class="bg-slide" style="background-image: url('photo4.jpg');"></div>
-        <div class="bg-slide" style="background-image: url('photo5.jpg');"></div>
-        <div class="bg-slide" style="background-image: url('photo6.jpg');"></div>
-        <div class="bg-slide" style="background-image: url('photo7.jpg');"></div>
-        <div class="bg-slide" style="background-image: url('photo8.jpg');"></div>
-        <div class="bg-slide" style="background-image: url('photo9.jpg');"></div>
-        <div class="bg-slide" style="background-image: url('photo10.jpg');"></div>
-        <div class="bg-slide" style="background-image: url('photo11.jpg');"></div>
-        <div class="bg-slide" style="background-image: url('photo12.jpg');"></div>
-        <div class="bg-slide" style="background-image: url('photo13.jpg');"></div>
-        <div class="bg-slide" style="background-image: url('photo14.jpg');"></div>
-        <div class="bg-slide" style="background-image: url('photo15.jpg');"></div>
-    </div>
-
-    <div class="hearts-container" id="heartsContainer"></div>
-
     <div class="container">
-        <h1>مكاننا السري 🌌</h1>
-        <p class="subtitle">مهما زادت المسافات، القلوب قريبة 💙</p>
-
-        <div class="split-grid">
-            
-            <div class="side-box">
-                <div class="side-title">💙 My Safe Place</div>
-                <div id="himStatus" class="status-display">جاري التحميل...</div>
-                
-                <div class="buttons-grid">
-                    <button onclick="updateHim('أنا في الجيم 🏋️‍♂️')">أنا في الجيم 🏋️‍♂️</button>
-                    <button onclick="updateHim('أنا مع صحابي 👥')">أنا مع صحابي 👥</button>
-                    <button onclick="updateHim('أنا في حجز كورة ⚽')">أنا في حجز كورة ⚽</button>
-                    <button onclick="updateHim('أنا مخنوق شوية 🥀')">أنا مخنوق شوية 🥀</button>
-                    <button onclick="updateHim('أنا هنام يا حبيبتي 🌙')">أنا هنام يا حبيبتي 🌙</button>
-                    <button class="special" onclick="updateHim('أنا بحبك أوي يفرح 🥺💙')">أنا بحبك أوي يفرح 🥺💙</button>
-                </div>
-
-                <div class="note-input-box">
-                    <input type="text" id="himNoteInput" placeholder="ملاحظة جديدة...">
-                    <button class="update-btn" onclick="updateHimNote()">تحديث</button>
-                </div>
-                <div id="himNoteDisplay" class="note-view">لا توجد ملاحظة حالياً</div>
-            </div>
-
-            <div class="side-box">
-                <div class="side-title">🌸 My Heart</div>
-                <div id="herStatus" class="status-display">جاري التحميل...</div>
-                
-                <div class="buttons-grid">
-                    <button onclick="updateHer('أنا في الكلية 🏛️')">أنا في الكلية 🏛️</button>
-                    <button onclick="updateHer('عند ستو 👵💙')">عند ستو 👵💙</button>
-                    <button onclick="updateHer('نزلت اجيب حاجة 🛍️')">نزلت اجيب حاجة 🛍️</button>
-                    <button onclick="updateHer('نزلت اجيب يحيى 👦')">نزلت اجيب يحيى 👦</button>
-                    <button onclick="updateHer('تعبانة شوية 🌧️')">تعبانة شوية 🌧️</button>
-                    <button onclick="updateHer('مخنوقة شوية 🥀')">مخنوقة شوية 🥀</button>
-                    <button onclick="updateHer('قاعدة بعيط 🥺')">قاعدة بعيط 🥺</button>
-                    <button onclick="updateHer('أنا هنام يا حبيبي 🌙')">أنا هنام يا حبيبي 🌙</button>
-                    <button class="special" onclick="updateHer('انت وحشتني أوي 💙')">انت وحشتني أوي 💙</button>
-                </div>
-
-                <div class="note-input-box">
-                    <input type="text" id="herNoteInput" placeholder="ملاحظة جديدة...">
-                    <button class="update-btn" onclick="updateHerNote()">تحديث</button>
-                </div>
-                <div id="herNoteDisplay" class="note-view">لا توجد ملاحظة حالياً</div>
-            </div>
-
+        <h2>مكاتنا السري والمتزامن 🚀</h2>
+        
+        <!-- مكان الصورة (حط رابط صورتك هنا أو اسم ملف الصورة لو في نفس الفولدر) -->
+        <div class="img-box">
+            <img id="my-image" src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23" alt="صورة المكان">
         </div>
 
-        <div class="footer">
-            Made with 💙 for us only.
-        </div>
+        <p>اضغط الزرار ده، وشوف الجهاز التاني هيحس بيك ويسمع في نفس اللحظة ولا لأ!</p>
+        
+        <button onclick="changeAction()">اضغط هنا للتزامن!</button>
+        
+        <div id="status-text">متصل بالسيرفر وجاهز...</div>
     </div>
 
-    <script>
+    <!-- كود ربط فايربيز السحابي المدمج -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
+
         const firebaseConfig = {
-            databaseURL: "https://mostafa-secret-space-default-rtdb.firebaseio.com/"
+            apiKey: "AIzaSyCRZwfL46dhupo4RRHQ8Remq_g2oyFZbbC4",
+            authDomain: "our-secret-space-1b6f5.firebaseapp.com",
+            databaseURL: "https://our-secret-space-1b6f5-default-rtdb.firebaseio.com",
+            projectId: "our-secret-space-1b6f5",
+            storageBucket: "our-secret-space-1b6f5.firebasestorage.app",
+            messagingSenderId: "944417168285",
+            appId: "1:944417168285:web:13se40e00534858ade6d74"
         };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
 
-        function updateHim(status) {
-            db.ref('our_space/him_status').set(status);
-        }
-        function updateHimNote() {
-            const val = document.getElementById('himNoteInput').value;
-            if(val.trim() !== "") {
-                db.ref('our_space/him_note').set(val);
-                document.getElementById('himNoteInput').value = "";
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const statusRef = ref(db, 'actionStatus');
+
+        // دالة بتشتغل لما تضغط على الزرار وترسل السيرفر
+        window.changeAction = function() {
+            const randomMsg = "تم الضغط على الزرار بواسطة أحد الأجهزة الساعة " + new Date().toLocaleTimeString();
+            set(statusRef, randomMsg);
+        };
+
+        // استقبال التحديثات لحظياً على أي جهاز تاني فاتح الصفحة
+        onValue(statusRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                document.getElementById('status-text').innerText = data;
+                // هنا ممكن تخليه يظهر إشعار صوتي أو يغير الشكل لحظياً
+                if(navigator.vibrate) navigator.vibrate(200); // اهتزاز بسيط للموبايل لو مدعوم
             }
-        }
-
-        function updateHer(status) {
-            db.ref('our_space/her_status').set(status);
-        }
-        function updateHerNote() {
-            const val = document.getElementById('herNoteInput').value;
-            if(val.trim() !== "") {
-                db.ref('our_space/her_note').set(val);
-                document.getElementById('herNoteInput').value = "";
-            }
-        }
-
-        db.ref('our_space/him_status').on('value', s => { if(s.val()) document.getElementById('himStatus').innerText = s.val(); });
-        db.ref('our_space/him_note').on('value', s => { if(s.val()) document.getElementById('himNoteDisplay').innerText = `"${s.val()}"`; });
-
-        db.ref('our_space/her_status').on('value', s => { if(s.val()) document.getElementById('herStatus').innerText = s.val(); });
-        db.ref('our_space/her_note').on('value', s => { if(s.val()) document.getElementById('herNoteDisplay').innerText = `"${s.val()}"`; });
-
-        // تقليب الصور في الخلفية كل 5 ثواني
-        const slides = document.querySelectorAll('.bg-slide');
-        let currentSlide = 0;
-        setInterval(() => {
-            slides[currentSlide].classList.remove('active');
-            currentSlide = (currentSlide + 1) % slides.length;
-            slides[currentSlide].classList.add('active');
-        }, 5000);
-
-        // القلوب المتحركة
-        setInterval(() => {
-            const container = document.getElementById('heartsContainer');
-            if(container.childElementCount < 15) {
-                const heart = document.createElement('div');
-                heart.className = 'heart';
-                heart.innerHTML = '💙';
-                heart.style.left = Math.random() * 100 + 'vw';
-                heart.style.animationDuration = (4 + Math.random() * 4) + 's';
-                container.appendChild(heart);
-                setTimeout(() => heart.remove(), 7000);
-            }
-        }, 500);
+        });
     </script>
 
 </body>
